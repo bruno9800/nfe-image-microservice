@@ -3,6 +3,10 @@ from ocr import extrair_chave_e_cnpj
 
 app = FastAPI()
 
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
 @app.post("/extract-info")
 async def extract_info(file: UploadFile = File(...)):
     content = await file.read()
