@@ -29,3 +29,8 @@ docker-compose.override.yml
 
 # Jupyter Notebook
 .ipynb_checkpoints/
+# SSH Keys
+hatzner
+hatzner.pub
+*.pem
+*.key
