@@ -1,13 +1,34 @@
 from fastapi import FastAPI, File, UploadFile
 from ocr import extrair_chave_e_cnpj
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import Depends, HTTPException, Header
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+API_KEY = os.getenv("API_KEY")
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Ou especifique domínios permitidos
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
 
-@app.post("/extract-info")
+
+
+def verify_api_key(x_api_key: str = Header(...)):
+    if x_api_key != API_KEY:
+        raise HTTPException(status_code=401, detail="Invalid API Key")
+
+@app.post("/extract-info", dependencies=[Depends(verify_api_key)])
 async def extract_info(file: UploadFile = File(...)):
     content = await file.read()
     
@@ -35,6 +56,8 @@ async def extract_info(file: UploadFile = File(...)):
         return {"error": "Chave de acesso não encontrada"}
 
     return info
+
+
 
 if __name__ == "__main__":
     import uvicorn

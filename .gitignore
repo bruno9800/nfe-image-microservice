@@ -34,3 +34,6 @@ hatzner
 hatzner.pub
 *.pem
 *.key
+
+
+/.env
